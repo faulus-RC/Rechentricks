@@ -440,14 +440,34 @@ function naechsteAufgabe() {
     zeigeStatus();
     return;
   }
+
   const aufgabe = aufgaben[aktuelleFrageIndex];
   document.getElementById('frage').textContent = aufgabe.frage;
   document.getElementById('fortschritt').textContent = `Frage ${aktuelleFrageIndex + 1} von ${aufgaben.length}`;
-  document.getElementById('eingabe').style.display = 'inline';
-  setTimeout(() => document.getElementById('eingabe')?.focus(), 50);
+  
+  const eingabe = document.getElementById('eingabe');
+
+  // Eingabe-Feld vorbereiten je nach Trick
+  if ([3].includes(trick)) {
+    eingabe.setAttribute("inputmode", "text");
+    eingabe.setAttribute("pattern", ".*");
+  } else if ([13, 14, 16].includes(trick)) {
+    eingabe.setAttribute("inputmode", "decimal");
+    eingabe.setAttribute("pattern", "[-0-9.,]*");
+  } else {
+    eingabe.setAttribute("inputmode", "numeric");
+    eingabe.setAttribute("pattern", "[0-9]*");
+  }
+
+  eingabe.setAttribute("autocomplete", "off");
+  eingabe.setAttribute("onkeydown", "if(event.key==='Enter') checkAntwort()");
+  eingabe.style.display = 'inline';
+
+  // Fokus mit leichter Verzögerung setzen
+  setTimeout(() => eingabe.focus(), 50);
+  
   startZeit = Date.now();
 }
-
 function zeigeStatus() {
   const titel = trickNamen[trick] || `Trick #${trick}`;
   document.getElementById('spielbereich').style.display = 'none';
