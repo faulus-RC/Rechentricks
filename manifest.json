@@ -1,0 +1,17 @@
+{
+  "name": "📚 Rechentricks Trainer",
+  "short_name": "Rechentrainer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Mathetricks und Kopfrechnen üben – clever und schnell!",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "de-DE"
+}

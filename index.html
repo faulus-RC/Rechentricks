@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<script src="main.js" defer></script>
+  <meta charset="UTF-8">
+  <title>📚 Rechentricks Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Rechentrainer">
+  <link rel="icon" href="icon.png" />
+  <link rel="apple-touch-icon" href="icon.png" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: auto;
+      max-width: 480px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 1.4rem;
+    }
+    button {
+      display: inline-block;
+      padding: 0.8rem 1rem;
+      margin: 0.4rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #f0f0f0;
+      cursor: pointer;
+      width: 90%;
+      max-width: 300px;
+    }
+    select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    #spielbereich input {
+      font-size: 1.2rem;
+      padding: 0.4rem;
+      margin-bottom: 1rem;
+      width: 80%;
+    }
+    #tipp {
+      font-style: italic;
+      color: #333388;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    #anleitung {
+      color: darkgreen;
+      font-size: 0.95rem;
+      margin: 0.5rem auto;
+      padding: 0.3rem;
+      border: 1px dashed darkgreen;
+      background-color: #f3fff3;
+      border-radius: 6px;
+    }
+    #chartContainer {
+      display: none;
+      margin-top: 2rem;
+    }
+    canvas {
+      width: 100%;
+    }
+    #status {
+      display: none;
+      border: 1px solid #aaa;
+      padding: 1rem;
+      margin-top: 2rem;
+      background: #f9f9f9;
+    }
+	#feedback.richtig {
+	  color: green;
+	  font-weight: bold;
+	}
+	#feedback.falsch {
+	  color: red;
+	  font-weight: bold;
+	}
+	@keyframes fall {
+	  to {
+	    transform: translateY(100vh) rotate(720deg);
+	    opacity: 0;
+	  }
+	}
+	.confetti {
+	  position: absolute;
+	  font-size: 2rem;
+	  animation: fall 5s linear forwards;
+	  pointer-events: none;
+	  z-index: 9999;
+	}
+  </style>
+</head>
+<body>
+  <h1>📚 Rechentricks Trainer</h1>
+  <div id="emoji">🙂</div>
+
+  <div id="menue">
+    <p><strong>Wähle ein Thema:</strong></p>
+
+    <select id="level">
+      <option value="leicht" selected>Leicht</option>
+      <option value="mittel">Mittel</option>
+      <option value="schwer">Schwer</option>
+    </select><br>
+
+    <!-- Pflichtstoff / Lehrplan -->
+    <h3>📘 Schulstoff üben</h3>
+    <button class="startTrickBtn" data-trick="10">📚 1x1</button>
+    <button class="startTrickBtn" data-trick="11">📚 1/1 (Division)</button>
+    <button class="startTrickBtn" data-trick="13">📏 Prozentrechnen</button>
+    <button class="startTrickBtn" data-trick="14">📉 Komma & Einheiten</button>
+    <button class="startTrickBtn" data-trick="3">🔎 Teilbarkeit</button>
+    <button class="startTrickBtn" data-trick="4">⚖ Binomische Formeln</button>
+    <button class="startTrickBtn" data-trick="12">✂ Klammertrick</button>
+	<button class="startTrickBtn" data-trick="15">📶 Potenzen üben</button>
+	<button class="startTrickBtn" data-trick="16">➕➖ Positive & Negative Zahlen</button>
+
+    <!-- Rechentricks -->
+    <h3>🧠 Rechentricks trainieren</h3>
+    <button class="startTrickBtn" data-trick="1">🤬 ×11</button>
+    <button class="startTrickBtn" data-trick="2">📀 Quadrat mit 5-Endung</button>
+    <button class="startTrickBtn" data-trick="5">🎲 ×5 oder ×25</button>
+    <button class="startTrickBtn" data-trick="6">🔀 Halbieren & Verdoppeln</button>
+    <button class="startTrickBtn" data-trick="7">🔀 Zweistellige × Zweistellige</button>
+    <button class="startTrickBtn" data-trick="8">🎯 × nahe 100</button>
+    <button class="startTrickBtn" data-trick="9">🍕 Bruch-Kreuztrick</button>
+
+    <br>
+    <button onclick="loescheFehlerAufgaben()">🗑️ Fehler zurücksetzen</button>
+  </div>
+
+  <div id="spielbereich" style="display:none;">
+    <p id="frage"></p>
+    <input id="eingabe" type="text" onkeydown="if(event.key==='Enter') checkAntwort()" />
+    <button id="okBtn">OK</button>
+    <div id="feedback"></div>
+    <div id="tipp"></div>
+    <div id="fortschritt"></div>
+    <button id="weiterBtn" style="display:none;">➡️ Weiter</button><br>
+    <button id="zurueckBtn">🔙 Zurück zur Auswahl</button>
+    <div style="margin-top: 0.5rem;">
+      <button id="tippBtn">🔍 Tipp anzeigen</button><br>
+      <button id="anleitungBtn">📘 Anleitung anzeigen</button>
+    </div>
+    <p style="font-size: 0.9rem; margin-top: 1rem; color: #555;">
+      💡 Klicke auf <strong>📘 Anleitung anzeigen</strong>, wenn du nicht weiterkommst!
+    </p>
+  </div>
+
+  <div id="status" style="display:none;">
+    <h3>Dein Ergebnis</h3>
+    <p id="zusammenfassung"></p>
+    <p>📸 Mach einen Screenshot und sende dein Ergebnis per Signal an Mama oder Papa - sonst gilt es als nicht gemacht 🤓!</p>
+    <button onclick="zeigeMenue()">🏠 Zurück zum Start</button>
+  </div>
+
+  
+</body>
+</html>
