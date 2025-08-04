@@ -3,11 +3,11 @@ self.addEventListener("install", (e) => {
     caches.open("rechentricks-v2").then((cache) =>
       cache.addAll([
         "./",              // wichtig für die Root-URL
-        "index.html",
-        "manifest.json",
-        "service-worker.js",
-        "icon.png",
-        "main.js"
+        "./index.html",
+        "./manifest.json",
+        "./service-worker.js",
+        "./icon.png",
+        "./main.js"
         // ggf. "style.css", Fonts, weitere Icons etc.
       ])
     )
