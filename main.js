@@ -448,11 +448,11 @@ function naechsteAufgabe() {
   const eingabe = document.getElementById('eingabe');
 
   // Eingabe-Feld vorbereiten je nach Trick
-  if ([3].includes(trick)) {
+  if ([3, 16].includes(trick)) {
     eingabe.setAttribute("inputmode", "text");
     eingabe.setAttribute("pattern", ".*");
-  } else if ([13, 14, 16].includes(trick)) {
-    eingabe.setAttribute("inputmode", "tel");
+  } else if ([13, 14].includes(trick)) {
+    eingabe.setAttribute("inputmode", "decimal");
     eingabe.setAttribute("pattern", "[-0-9.,]*");
   } else {
     eingabe.setAttribute("inputmode", "numeric");
