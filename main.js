@@ -452,7 +452,7 @@ function naechsteAufgabe() {
     eingabe.setAttribute("inputmode", "text");
     eingabe.setAttribute("pattern", ".*");
   } else if ([13, 14, 16].includes(trick)) {
-    eingabe.setAttribute("inputmode", "decimal");
+    eingabe.setAttribute("inputmode", "tel");
     eingabe.setAttribute("pattern", "[-0-9.,]*");
   } else {
     eingabe.setAttribute("inputmode", "numeric");
