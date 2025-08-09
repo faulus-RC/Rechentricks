@@ -517,18 +517,18 @@ window.addEventListener('DOMContentLoaded', () => {
 // Service Worker registrieren + Update anstoßen + Version anzeigen
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
-    .then((reg) => {
+    .then(async (reg) => {
       console.log("✅ Service Worker registriert", reg);
 
-      // Sofort nach Updates suchen
+      // Nach Updates suchen
       reg.update?.();
 
-      // Falls schon ein neuer SW wartet → sofort aktivieren
+      // Wenn schon ein neuer SW auf "waiting" steht → aktivieren
       if (reg.waiting) {
         reg.waiting.postMessage({ type: "SKIP_WAITING" });
       }
 
-      // Neuer SW gefunden → nach Installation skipWaiting anstoßen
+      // Falls gerade ein neuer SW installiert wird → nach "installed" aktivieren
       reg.addEventListener("updatefound", () => {
         const sw = reg.installing;
         if (!sw) return;
@@ -539,20 +539,14 @@ if ("serviceWorker" in navigator) {
         });
       });
 
-      // Nach der Registrierung gleich die Version vom SW anfragen
-      const askVersion = () => {
-        // erst versuchen über aktiven Controller, sonst über reg.active
-        if (navigator.serviceWorker.controller) {
-          navigator.serviceWorker.controller.postMessage({ type: "GET_VERSION" });
-        } else if (reg.active) {
-          reg.active.postMessage({ type: "GET_VERSION" });
-        }
-      };
-      askVersion();
+      // Auf aktive Kontrolle warten, dann Version abfragen
+      await navigator.serviceWorker.ready;
+      const target = navigator.serviceWorker.controller || reg.active;
+      target?.postMessage({ type: "GET_VERSION" });
     })
     .catch((err) => console.error("❌ SW Fehler:", err));
 
-  // SW → Seite: Version empfangen und anzeigen
+  // Nachricht vom SW empfangen (Version)
   navigator.serviceWorker.addEventListener("message", (event) => {
     if (event.data && event.data.type === "VERSION") {
       const el = document.getElementById("version");
@@ -560,8 +554,12 @@ if ("serviceWorker" in navigator) {
     }
   });
 
-  // Wenn der aktive SW wechselt (z. B. nach skipWaiting) → einmal neu laden
+  // Wenn der aktive SW wechselt → einmal neu laden
   navigator.serviceWorker.addEventListener("controllerchange", () => {
     window.location.reload();
   });
+} else {
+  // Fallback, falls kein SW (z. B. im dev-File://)
+  const el = document.getElementById("version");
+  if (el) el.textContent = "Version: dev";
 }
