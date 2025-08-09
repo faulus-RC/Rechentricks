@@ -426,14 +426,15 @@ function zeigeStatus() {
   }
 
   // Zusammenfassung schreiben (alles in EINEM Template-String mit Backticks!)
-  const z = document.getElementById('zusammenfassung');
-  z.innerText = `🧠 Thema: ${titel}
+const z = document.getElementById('zusammenfassung');
+z.innerText = `🧠 Thema: ${titel}
 🧩 Level: ${aktuellesLevel}
 Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.
 🎯 Punkte: ${punkte}
 ${sterne}
 
 ${lob}`;
+
 
   // Auto-Level nur für bestimmte Tricks
   const levelTricks = [1, 4, 7, 8, 13, 14];
