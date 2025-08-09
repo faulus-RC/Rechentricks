@@ -400,14 +400,19 @@ function naechsteAufgabe(fromUserGesture = false) {
 }
 
 function zeigeStatus() {
+  const titel = trickNamen[trick] || `Trick #${trick}`;
+
+  // Ansicht umschalten
   document.getElementById('spielbereich').style.display = 'none';
   document.getElementById('status').style.display = 'block';
   document.getElementById('emoji').textContent = "🎉";
 
+  // Punkte & Sterne
   const punkte = richtig * 10;
   const anzahlSterne = Math.round((richtig / aufgaben.length) * 5);
   const sterne = '⭐️'.repeat(anzahlSterne) + '☆'.repeat(5 - anzahlSterne);
 
+  // Lob-Text
   let lob = "";
   if (richtig === aufgaben.length) {
     lob = "🏆 Perfekt! Du bist ein Rechentrick-Profi!";
@@ -420,19 +425,23 @@ function zeigeStatus() {
     lob = "🧐 Übung macht den Meister!";
   }
 
-  document.getElementById('zusammenfassung').innerText =
-    `Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.
+  // Zusammenfassung schreiben
+  const z = document.getElementById('zusammenfassung');
+  z.innerText = `🧠 Thema: ${titel}
+🧩 Level: ${aktuellesLevel}
+Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.
 🎯 Punkte: ${punkte}
 ${sterne}
 
 ${lob}`;
 
+  // Auto-Level nur für bestimmte Tricks
   const levelTricks = [1, 4, 7, 8, 13, 14];
   if (levelTricks.includes(trick)) {
-    const neuesLevel = richtig >= 9 ? "schwer" : richtig >= 6 ? "mittel" : "leicht";
+    const neuesLevel = (richtig >= 9) ? "schwer" : (richtig >= 6) ? "mittel" : "leicht";
     document.getElementById("level").value = neuesLevel;
     aktuellesLevel = neuesLevel;
-    document.getElementById('zusammenfassung').innerText += `\n📊 Dein Level wurde auf "${neuesLevel}" angepasst.`;
+    z.innerText += `\n📊 Dein Level wurde auf "${neuesLevel}" angepasst.`;
   }
 }
 
