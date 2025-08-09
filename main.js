@@ -514,9 +514,35 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Service Worker registrieren
+// Service Worker registrieren + Update anstoßen
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
-    .then(() => console.log("✅ Service Worker registriert"))
+    .then((reg) => {
+      console.log("✅ Service Worker registriert", reg);
+
+      // Sofort nach neuem SW suchen
+      reg.update?.();
+
+      // Wenn ein neuer SW installiert ist und wartet: Seite neu laden, sobald er übernimmt
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+
+      // Wenn der SW gerade installiert wurde (waiting), trigger skipWaiting
+      reg.addEventListener("updatefound", () => {
+        const sw = reg.installing;
+        if (!sw) return;
+        sw.addEventListener("statechange", () => {
+          if (sw.state === "installed" && reg.waiting) {
+            reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          }
+        });
+      });
+    })
     .catch((err) => console.error("❌ SW Fehler:", err));
+
+  // Wenn der aktive SW wechselt (z. B. nach skipWaiting) → Seite einmal neu laden
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
 }
