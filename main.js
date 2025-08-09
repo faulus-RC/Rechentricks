@@ -425,7 +425,7 @@ function zeigeStatus() {
     lob = "🧐 Übung macht den Meister!";
   }
 
-  // Zusammenfassung schreiben
+  // Zusammenfassung schreiben (alles in EINEM Template-String)
   const z = document.getElementById('zusammenfassung');
   z.innerText = `🧠 Thema: ${titel}
 🧩 Level: ${aktuellesLevel}

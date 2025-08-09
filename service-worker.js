@@ -1,5 +1,5 @@
 // service-worker.js
-const APP_VERSION = "v10.4";
+const APP_VERSION = "v10.5";
 const CACHE = `rechentricks-${APP_VERSION}`;
 const ASSETS = [
   "./",
