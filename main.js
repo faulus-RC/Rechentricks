@@ -366,32 +366,29 @@ function naechsteAufgabe(fromUserGesture = false) {
   document.getElementById('fortschritt').textContent =
     `Frage ${aktuelleFrageIndex + 1} von ${aufgaben.length}`;
 
-  // Inputmode / Pattern je nach Trick
+  // Inputmode/Pattern je nach Trick (für die iOS-Tastatur)
   if ([3, 16].includes(trick)) {
+    // Text: für "ja/nein" bzw. Minuszeichen sicher
     eingabe.setAttribute("inputmode", "text");
     eingabe.setAttribute("pattern", ".*");
   } else if ([13, 14].includes(trick)) {
+    // Dezimalzahlen inkl. Komma/Punkt und Minus erlauben
     eingabe.setAttribute("inputmode", "decimal");
     eingabe.setAttribute("pattern", "[-0-9.,]*");
   } else {
+    // Reine Ziffern
     eingabe.setAttribute("inputmode", "numeric");
     eingabe.setAttribute("pattern", "[0-9]*");
   }
   eingabe.setAttribute("autocomplete", "off");
-  eingabe.setAttribute("onkeydown", "if(event.key==='Enter') checkAntwort()");
   eingabe.style.display = 'inline';
 
-  // Fokus: im User-Event sofort, sonst im nächsten Frame
+  // Fokus setzen (direkt bei User-Geste; sonst im nächsten Frame)
   const doFocus = () => {
     eingabe.focus({ preventScroll: true });
     try { eingabe.setSelectionRange(eingabe.value.length, eingabe.value.length); } catch {}
   };
-
-  if (fromUserGesture) {
-    doFocus();
-  } else {
-    requestAnimationFrame(doFocus);
-  }
+  if (fromUserGesture) doFocus(); else requestAnimationFrame(doFocus);
 
   startZeit = Date.now();
 }
@@ -410,6 +407,16 @@ function konfetti() {
 
 // DOM bereit
 window.addEventListener('DOMContentLoaded', () => {
+  const eingabe = document.getElementById('eingabe');
+  if (eingabe) {
+    eingabe.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        checkAntwort();
+      }
+    });
+  }
+
   document.getElementById('menue')?.addEventListener('click', (e) => {
     if (e.target.matches('.startTrickBtn')) {
       e.preventDefault();
