@@ -1,6 +1,6 @@
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open("rechentricks-v2").then((cache) =>
+    caches.open("rechentricks-v3").then((cache) =>
       cache.addAll([
         "./",              // wichtig für die Root-URL
         "./index.html",
