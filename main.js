@@ -425,7 +425,7 @@ function zeigeStatus() {
     lob = "🧐 Übung macht den Meister!";
   }
 
-  // Zusammenfassung schreiben (alles in EINEM Template-String)
+  // Zusammenfassung schreiben (alles in EINEM Template-String mit Backticks!)
   const z = document.getElementById('zusammenfassung');
   z.innerText = `🧠 Thema: ${titel}
 🧩 Level: ${aktuellesLevel}
@@ -444,6 +444,7 @@ ${lob}`;
     z.innerText += `\n📊 Dein Level wurde auf "${neuesLevel}" angepasst.`;
   }
 }
+
 
 
 function konfetti() {
