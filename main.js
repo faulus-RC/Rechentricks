@@ -407,6 +407,13 @@ function zeigeStatus() {
   document.getElementById('status').style.display = 'block';
   document.getElementById('emoji').textContent = "🎉";
 
+   // 📅 Datum & Uhrzeit formatieren
+  const jetzt = new Date();
+  const datumUhrzeit = jetzt.toLocaleString('de-DE', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  });
+  
   // Punkte & Sterne
   const punkte = richtig * 10;
   const anzahlSterne = Math.round((richtig / aufgaben.length) * 5);
@@ -425,15 +432,15 @@ function zeigeStatus() {
     lob = "🧐 Übung macht den Meister!";
   }
 
-  // Zusammenfassung schreiben (alles in EINEM Template-String mit Backticks!)
-const z = document.getElementById('zusammenfassung');
-z.innerText = `🧠 Thema: ${titel}
-🧩 Level: ${aktuellesLevel}
-Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.
-🎯 Punkte: ${punkte}
-${sterne}
-
-${lob}`;
+// Zusammenfassung schreiben
+  const z = document.getElementById('zusammenfassung');
+  z.innerText =
+    `📅 Datum/Zeit: ${datumUhrzeit}\n` +
+    `🧠 Thema: ${titel}\n` +
+    `🧩 Level: ${aktuellesLevel}\n` +
+    `Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n` +
+    `🎯 Punkte: ${punkte}\n` +
+    `${sterne}\n\n${lob}`;
 
 
   // Auto-Level nur für bestimmte Tricks
