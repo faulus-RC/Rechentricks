@@ -546,3 +546,6 @@ if ("serviceWorker" in navigator) {
     window.location.reload();
   });
 }
+
+const APP_VERSION = "v6";
+document.getElementById("version").textContent = "Version: " + APP_VERSION;
