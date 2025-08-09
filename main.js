@@ -514,21 +514,21 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Service Worker registrieren + Update anstoßen
+// Service Worker registrieren + Update anstoßen + Version anzeigen
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then((reg) => {
       console.log("✅ Service Worker registriert", reg);
 
-      // Sofort nach neuem SW suchen
+      // Sofort nach Updates suchen
       reg.update?.();
 
-      // Wenn ein neuer SW installiert ist und wartet: Seite neu laden, sobald er übernimmt
+      // Falls schon ein neuer SW wartet → sofort aktivieren
       if (reg.waiting) {
         reg.waiting.postMessage({ type: "SKIP_WAITING" });
       }
 
-      // Wenn der SW gerade installiert wurde (waiting), trigger skipWaiting
+      // Neuer SW gefunden → nach Installation skipWaiting anstoßen
       reg.addEventListener("updatefound", () => {
         const sw = reg.installing;
         if (!sw) return;
@@ -538,10 +538,29 @@ if ("serviceWorker" in navigator) {
           }
         });
       });
+
+      // Nach der Registrierung gleich die Version vom SW anfragen
+      const askVersion = () => {
+        // erst versuchen über aktiven Controller, sonst über reg.active
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({ type: "GET_VERSION" });
+        } else if (reg.active) {
+          reg.active.postMessage({ type: "GET_VERSION" });
+        }
+      };
+      askVersion();
     })
     .catch((err) => console.error("❌ SW Fehler:", err));
 
-  // Wenn der aktive SW wechselt (z. B. nach skipWaiting) → Seite einmal neu laden
+  // SW → Seite: Version empfangen und anzeigen
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "VERSION") {
+      const el = document.getElementById("version");
+      if (el) el.textContent = "Version: " + event.data.version;
+    }
+  });
+
+  // Wenn der aktive SW wechselt (z. B. nach skipWaiting) → einmal neu laden
   navigator.serviceWorker.addEventListener("controllerchange", () => {
     window.location.reload();
   });
