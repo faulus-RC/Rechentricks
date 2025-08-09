@@ -396,6 +396,19 @@ function startTrick(nr) {
     .insertAdjacentHTML("beforebegin", `<p class="level-anzeige" style="color:#666">Level: ${level}</p>`);
 
   naechsteAufgabe();
+
+	// 🔑 iOS: focus innerhalb des Click-Handlers erzwingen
+  const eingabe = document.getElementById('eingabe');
+  if (eingabe) {
+    // mini-ensure sequence
+    eingabe.click();                       // hilft iOS manchmal
+    eingabe.focus({ preventScroll: true }); 
+    setTimeout(() => {
+      if (document.activeElement !== eingabe) {
+        eingabe.focus({ preventScroll: true });
+      }
+    }, 50);
+  }
 }
 
 function checkAntwort() {
