@@ -396,19 +396,6 @@ function startTrick(nr) {
     .insertAdjacentHTML("beforebegin", `<p class="level-anzeige" style="color:#666">Level: ${level}</p>`);
 
   naechsteAufgabe();
-
-	// 🔑 iOS: focus innerhalb des Click-Handlers erzwingen
-  const eingabe = document.getElementById('eingabe');
-  if (eingabe) {
-    // mini-ensure sequence
-    eingabe.click();                       // hilft iOS manchmal
-    eingabe.focus({ preventScroll: true }); 
-    setTimeout(() => {
-      if (document.activeElement !== eingabe) {
-        eingabe.focus({ preventScroll: true });
-      }
-    }, 50);
-  }
 }
 
 function checkAntwort() {
@@ -444,7 +431,8 @@ function naechsteAufgabe() {
   versuch = 0;
   document.getElementById('weiterBtn').style.display = 'none';
   document.getElementById('tipp').textContent = "";
-  document.getElementById('eingabe').value = "";
+  const eingabe = document.getElementById('eingabe');
+  eingabe.value = "";
   const feedback = document.getElementById('feedback');
   feedback.textContent = "";
   feedback.className = "";
@@ -459,9 +447,7 @@ function naechsteAufgabe() {
   document.getElementById('fortschritt').textContent =
     `Frage ${aktuelleFrageIndex + 1} von ${aufgaben.length}`;
 
-  const eingabe = document.getElementById('eingabe');
-
-  // Eingabe-Feld vorbereiten je nach Trick
+  // inputmode / pattern je nach Trick
   if ([3, 16].includes(trick)) {
     eingabe.setAttribute("inputmode", "text");
     eingabe.setAttribute("pattern", ".*");
@@ -474,25 +460,38 @@ function naechsteAufgabe() {
   }
 
   eingabe.setAttribute("autocomplete", "off");
-  // enter-Handler nur setzen, falls nicht schon vorhanden
-  if (!eingabe._enterBound) {
-    eingabe.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') checkAntwort();
-    });
-    eingabe._enterBound = true;
-  }
+  eingabe.onkeydown = (e) => { if (e.key === 'Enter') checkAntwort(); };
   eingabe.style.display = 'inline';
 
-  // ✅ Stabiler Fokus (besonders für iOS Safari)
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
+  // 🔑 iOS focus ensure – bei JEDER Aufgabe
+  const ensureFocus = () => {
+    // 1) leichter Delay, damit DOM & Styles fertig sind
+    setTimeout(() => {
+      // 2) click() hilft iOS oft
+      try { eingabe.click(); } catch {}
+      // 3) focus() versuchen
       eingabe.focus({ preventScroll: true });
-      if (eingabe.setSelectionRange) {
+      // 4) Cursor ans Ende setzen (hilft der Tastatur beim Aufpoppen)
+      try {
         const len = eingabe.value.length;
-        eingabe.setSelectionRange(len, len); // Cursor ans Ende
-      }
-    });
-  });
+        eingabe.setSelectionRange(len, len);
+      } catch {}
+      // 5) fallback nach kurzem Delay, falls iOS den ersten focus „verschluckt“
+      setTimeout(() => {
+        if (document.activeElement !== eingabe) {
+          eingabe.focus({ preventScroll: true });
+          try {
+            const len = eingabe.value.length;
+            eingabe.setSelectionRange(len, len);
+          } catch {}
+        }
+      }, 80);
+    }, 30);
+  };
+
+  // iOS‑Erkennung schlank halten
+  const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isiOS) ensureFocus(); else setTimeout(() => eingabe.focus(), 30);
 
   startZeit = Date.now();
 }
