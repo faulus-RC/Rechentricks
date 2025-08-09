@@ -393,6 +393,37 @@ function naechsteAufgabe(fromUserGesture = false) {
   startZeit = Date.now();
 }
 
+function zeigeStatus() {
+  document.getElementById('spielbereich').style.display = 'none';
+  document.getElementById('status').style.display = 'block';
+  document.getElementById('emoji').textContent = "🎉";
+  const punkte = richtig * 10;
+  const anzahlSterne = Math.round(richtig / aufgaben.length * 5);
+  const sterne = '⭐️'.repeat(anzahlSterne) + '☆'.repeat(5 - anzahlSterne);
+  let lob = "";
+  if (richtig === aufgaben.length) {
+    lob = "🏆 Perfekt! Du bist ein Rechentrick-Profi!";
+    konfetti();
+  } else if (richtig >= aufgaben.length * 0.8) {
+    lob = "👏 Super Leistung!";
+  } else if (richtig >= aufgaben.length * 0.5) {
+    lob = "💪 Weiter so!";
+  } else {
+    lob = "🧐 Übung macht den Meister!";
+  }
+  document.getElementById('zusammenfassung').innerText =
+    Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n🎯 Punkte: ${punkte}\n${sterne}\n\n${lob};
+
+  const levelTricks = [1, 4, 7, 8, 13, 14];
+  if (levelTricks.includes(trick)) {
+    const neuesLevel = richtig >= 9 ? "schwer" : richtig >= 6 ? "mittel" : "leicht";
+    document.getElementById("level").value = neuesLevel;
+    aktuellesLevel = neuesLevel;
+    document.getElementById('zusammenfassung').innerText += \n📊 Dein Level wurde auf \"${neuesLevel}\" angepasst.;
+  }
+}
+
+
 function konfetti() {
   for (let i = 0; i < 25; i++) {
     const el = document.createElement("div");
