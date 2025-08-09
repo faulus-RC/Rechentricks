@@ -345,7 +345,7 @@ function generiereAufgaben(nr) {
     arr.push({ frage, korrekt });
   }
 	  
-}
+
 return arr;
 }
 
