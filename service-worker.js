@@ -25,6 +25,13 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+// 📩 SkipWaiting auf Kommando
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 // Stale-while-revalidate: schnell aus Cache, im Hintergrund aktualisieren
 self.addEventListener("fetch", (e) => {
   const req = e.request;
