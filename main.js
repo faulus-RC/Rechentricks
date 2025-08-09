@@ -72,17 +72,10 @@ function generiereAufgaben(nr) {
 
   if (nr === 1) {
     const level = document.getElementById("level").value;
-	console.log("Level:", level);
     let min, max;
-
-    if (level === "leicht") {
-      min = 1; max = 9;
-    } else if (level === "mittel") {
-      min = 1; max = 99;
-    } else {
-      min = 1; max = 999;
-    }
-
+    if (level === "leicht") { min = 1; max = 9; }
+    else if (level === "mittel") { min = 1; max = 99; }
+    else { min = 1; max = 999; }
     for (let i = 0; i < 10; i++) {
       const x = Math.floor(Math.random() * (max - min + 1)) + min;
       arr.push({ frage: `${x} × 11`, korrekt: x * 11 });
@@ -104,52 +97,27 @@ function generiereAufgaben(nr) {
 
   } else if (nr === 4) {
     let aMin, aMax, bMin, bMax, typListe;
-
-    if (aktuellesLevel === "leicht") {
-      aMin = 2; aMax = 5;
-      bMin = 1; bMax = 3;
-      typListe = ["+"]; // nur (a+b)²
-    } else if (aktuellesLevel === "mittel") {
-      aMin = 5; aMax = 12;
-      bMin = 1; bMax = 5;
-      typListe = ["+", "-"];
-    } else {
-      aMin = 10; aMax = 20;
-      bMin = 2; bMax = 10;
-      typListe = ["+", "-", "*"];
-    }
-
+    if (aktuellesLevel === "leicht") { aMin = 2; aMax = 5; bMin = 1; bMax = 3; typListe = ["+"]; }
+    else if (aktuellesLevel === "mittel") { aMin = 5; aMax = 12; bMin = 1; bMax = 5; typListe = ["+", "-"]; }
+    else { aMin = 10; aMax = 20; bMin = 2; bMax = 10; typListe = ["+", "-", "*"]; }
     for (let i = 0; i < 10; i++) {
       const a = Math.floor(Math.random() * (aMax - aMin + 1)) + aMin;
       const b = Math.floor(Math.random() * (bMax - bMin + 1)) + bMin;
       const typ = typListe[Math.floor(Math.random() * typListe.length)];
-
       let frage, korrekt;
-      if (typ === "+") {
-        frage = `(${a}+${b})²`; korrekt = (a + b) ** 2;
-      } else if (typ === "-") {
-        frage = `(${a}-${b})²`; korrekt = (a - b) ** 2;
-      } else {
-        frage = `(${a}+${b})×(${a}-${b})`; korrekt = a ** 2 - b ** 2;
-      }
+      if (typ === "+") { frage = `(${a}+${b})²`; korrekt = (a + b) ** 2; }
+      else if (typ === "-") { frage = `(${a}-${b})²`; korrekt = (a - b) ** 2; }
+      else { frage = `(${a}+${b})×(${a}-${b})`; korrekt = a ** 2 - b ** 2; }
       arr.push({ frage, korrekt });
     }
 
   } else if (nr === 5 || nr === 6 || nr === 7 || nr === 8) {
-  	 const level = document.getElementById("level").value;
-
-    let genMinMax = (lvl, easy, mid, hard) => {
-      if (lvl === "leicht") return easy;
-      if (lvl === "mittel") return mid;
-      return hard;
-    };
-
+    const level = document.getElementById("level").value;
+    const genMinMax = (lvl, easy, mid, hard) => (lvl === "leicht" ? easy : (lvl === "mittel" ? mid : hard));
     const range = genMinMax(level, [5, 15], [10, 40], [30, 99]);
-
     for (let i = 0; i < 10; i++) {
       const a = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
       let b;
-
       if (nr === 5) {
         b = [5, 25][Math.floor(Math.random() * 2)];
       } else if (nr === 6) {
@@ -158,13 +126,10 @@ function generiereAufgaben(nr) {
       } else {
         b = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
       }
-
-    const frage = `${a} × ${b}`;
-    const korrekt = a * b;
-
-    arr.push({ frage, korrekt });
-  }
-
+      const frage = `${a} × ${b}`;
+      const korrekt = a * b;
+      arr.push({ frage, korrekt });
+    }
 
   } else if (nr === 9) {
     for (let i = 0; i < 10; i++) {
@@ -176,27 +141,24 @@ function generiereAufgaben(nr) {
       const korrekt = `${z1 * n2 + z2 * n1}/${n1 * n2}`;
       arr.push({ frage, korrekt });
     }
- 
-  } else if (nr === 10) {
-     const level = document.getElementById("level").value;
-     let max = level === "leicht" ? 5 : level === "mittel" ? 10 : 12;
 
+  } else if (nr === 10) {
+    const level = document.getElementById("level").value;
+    const max = level === "leicht" ? 5 : (level === "mittel" ? 10 : 12);
     for (let i = 0; i < 10; i++) {
       const a = Math.floor(Math.random() * max) + 1;
       const b = Math.floor(Math.random() * max) + 1;
       arr.push({ frage: `${a} × ${b}`, korrekt: a * b });
     }
-   
-  } else if (nr === 11) {
-	  const level = document.getElementById("level").value;
-	  let max = level === "leicht" ? 5 : level === "mittel" ? 10 : 12;
 
-	  for (let i = 0; i < 10; i++) {
-	    const b = Math.floor(Math.random() * max) + 1;
-	    const a = b * (Math.floor(Math.random() * max) + 1); // sorgt für glatte Division
-	    arr.push({ frage: `${a} ÷ ${b}`, korrekt: a / b });
-	  }
-		
+  } else if (nr === 11) {
+    const level = document.getElementById("level").value;
+    const max = level === "leicht" ? 5 : (level === "mittel" ? 10 : 12);
+    for (let i = 0; i < 10; i++) {
+      const b = Math.floor(Math.random() * max) + 1;
+      const a = b * (Math.floor(Math.random() * max) + 1);
+      arr.push({ frage: `${a} ÷ ${b}`, korrekt: a / b });
+    }
 
   } else if (nr === 12) {
     for (let i = 0; i < 10; i++) {
@@ -218,16 +180,12 @@ function generiereAufgaben(nr) {
       prozentsätze = [2, 3, 4, 6, 12.5, 17, 33];
       grundwertGen = () => (Math.random() * 300 + 2).toFixed(1);
     }
-
     for (let i = 0; i < 10; i++) {
       const proz = prozentsätze[Math.floor(Math.random() * prozentsätze.length)];
       const grundwert = grundwertGen();
       const wert = parseFloat(grundwert) * (proz / 100);
       const korrekt = (Math.round(wert * 100) / 100).toString();
-      arr.push({
-        frage: `Wie viel sind ${proz}% von ${grundwert}?`,
-        korrekt
-      });
+      arr.push({ frage: `Wie viel sind ${proz}% von ${grundwert}?`, korrekt });
     }
 
   } else if (nr === 14) {
@@ -238,7 +196,6 @@ function generiereAufgaben(nr) {
       { frage: "l → ml", faktor: 1000, einheitA: "l", einheitB: "ml" },
       { frage: "×10", faktor: 10 },
     ];
-
     const typenMittel = [
       { frage: "cm → m", faktor: 0.01, einheitA: "cm", einheitB: "m" },
       { frage: "g → kg", faktor: 0.001, einheitA: "g", einheitB: "kg" },
@@ -246,13 +203,11 @@ function generiereAufgaben(nr) {
       { frage: "÷10", faktor: 0.1 },
       { frage: "×100", faktor: 100 },
     ];
-
     const typenSchwer = [
       { frage: "÷1000", faktor: 0.001 },
       { frage: "×1000", faktor: 1000 },
       { frage: "mm → m", faktor: 0.001, einheitA: "mm", einheitB: "m" },
     ];
-
     const festeAufgaben = [
       { frage: "Wie viele mm sind 1,3 cm?", korrekt: "13" },
       { frage: "Wie viele g sind 2,5 kg?", korrekt: "2500" },
@@ -262,91 +217,58 @@ function generiereAufgaben(nr) {
       { frage: "Was ist mehr: 0.5 kg oder 300 g?", korrekt: "0.5 kg" },
       { frage: "0.012 m = ? mm", korrekt: "12" }
     ];
-
-    const typen = level === "leicht" ? typenLeicht :
-                  level === "mittel" ? typenLeicht.concat(typenMittel) :
-                                       typenLeicht.concat(typenMittel, typenSchwer);
-
+    const typen = level === "leicht" ? typenLeicht
+                : level === "mittel" ? typenLeicht.concat(typenMittel)
+                : typenLeicht.concat(typenMittel, typenSchwer);
     for (let i = 0; i < 6; i++) {
       const typ = typen[Math.floor(Math.random() * typen.length)];
-      const basis =
-        level === "leicht" ? (Math.random() * 9 + 1).toFixed(0) :
-        level === "mittel" ? (Math.random() * 50 + 1).toFixed(1) :
-                             (Math.random() * 100).toFixed(3);
-
-      const frage = typ.einheitA
-        ? `${basis} ${typ.einheitA} = ? ${typ.einheitB}`
-        : `${basis} ${typ.frage}`;
-
+      const basis = level === "leicht" ? (Math.random() * 9 + 1).toFixed(0)
+                   : level === "mittel" ? (Math.random() * 50 + 1).toFixed(1)
+                   : (Math.random() * 100).toFixed(3);
+      const frage = typ.einheitA ? `${basis} ${typ.einheitA} = ? ${typ.einheitB}` : `${basis} ${typ.frage}`;
       const korrekt = (parseFloat(basis) * typ.faktor).toFixed(5).replace(/\.?0+$/, "");
       arr.push({ frage, korrekt });
     }
+    festeAufgaben.sort(() => 0.5 - Math.random()).slice(0, 4).forEach(e => arr.push(e));
 
-    const zufaelligeFeste = festeAufgaben.sort(() => 0.5 - Math.random()).slice(0, 4);
-    zufaelligeFeste.forEach(e => arr.push(e));
-  
-} else if (nr === 15) {
-  const aufgabenTypen = [
-    () => {
-      const a = Math.floor(Math.random() * 10 + 2);
-      const e = Math.floor(Math.random() * 3 + 2);
-      return { frage: `${a}^${e}`, korrekt: (a ** e).toString() };
-    },
-    () => {
-      const base = [2, 3, 5][Math.floor(Math.random() * 3)];
-      const exp1 = Math.floor(Math.random() * 4 + 1);
-      const exp2 = Math.floor(Math.random() * 4 + 1);
-      return {
-        frage: `${base}^${exp1} × ${base}^${exp2}`,
-        korrekt: `${base}^${exp1 + exp2}`
-      };
-    },
-    () => {
-      const base = [2, 10][Math.floor(Math.random() * 2)];
-      const exp = Math.floor(Math.random() * 5 + 1);
-      return {
-        frage: `${base}^${exp} = ?`,
-        korrekt: (base ** exp).toString()
-      };
-    },
-    () => {
-      const base = [2, 3, 10][Math.floor(Math.random() * 3)];
-      const exp1 = Math.floor(Math.random() * 4 + 2);
-      const exp2 = Math.floor(Math.random() * 2 + 1);
-      return {
-        frage: `(${base}^${exp1})^${exp2}`,
-        korrekt: `${base}^${exp1 * exp2}`
-      };
+  } else if (nr === 15) {
+    const aufgabenTypen = [
+      () => { const a = Math.floor(Math.random() * 10 + 2); const e = Math.floor(Math.random() * 3 + 2);
+              return { frage: `${a}^${e}`, korrekt: (a ** e).toString() }; },
+      () => { const base = [2, 3, 5][Math.floor(Math.random() * 3)];
+              const exp1 = Math.floor(Math.random() * 4 + 1);
+              const exp2 = Math.floor(Math.random() * 4 + 1);
+              return { frage: `${base}^${exp1} × ${base}^${exp2}`, korrekt: `${base}^${exp1 + exp2}` }; },
+      () => { const base = [2, 10][Math.floor(Math.random() * 2)];
+              const exp = Math.floor(Math.random() * 5 + 1);
+              return { frage: `${base}^${exp} = ?`, korrekt: (base ** exp).toString() }; },
+      () => { const base = [2, 3, 10][Math.floor(Math.random() * 3)];
+              const exp1 = Math.floor(Math.random() * 4 + 2);
+              const exp2 = Math.floor(Math.random() * 2 + 1);
+              return { frage: `(${base}^${exp1})^${exp2}`, korrekt: `${base}^${exp1 * exp2}` }; }
+    ];
+    for (let i = 0; i < 10; i++) {
+      const aufgabe = aufgabenTypen[Math.floor(Math.random() * aufgabenTypen.length)]();
+      arr.push(aufgabe);
     }
-  ];
 
-  for (let i = 0; i < 10; i++) {
-    const aufgabe = aufgabenTypen[Math.floor(Math.random() * aufgabenTypen.length)]();
-    arr.push(aufgabe);
+  } else if (nr === 16) {
+    const level = document.getElementById("level").value;
+    const max = level === "leicht" ? 10 : (level === "mittel" ? 20 : 50);
+    for (let i = 0; i < 10; i++) {
+      let a = Math.floor(Math.random() * max) + 1;
+      let b = Math.floor(Math.random() * max) + 1;
+      if (Math.random() < 0.5) a = -a;
+      if (Math.random() < 0.5) b = -b;
+      const operator = Math.random() < 0.5 ? "+" : "-";
+      const korrekt = operator === "+" ? a + b : a - b;
+      let frage = `${a} ${operator} ${b}`;
+      if (b < 0) frage = `${a} ${operator} (${b})`;
+      arr.push({ frage, korrekt });
+    }
   }
 
-} else if (nr === 16) {
-  const level = document.getElementById("level").value;
-  const max = level === "leicht" ? 10 : level === "mittel" ? 20 : 50;
-
-  for (let i = 0; i < 10; i++) {
-    let a = Math.floor(Math.random() * max) + 1;
-    let b = Math.floor(Math.random() * max) + 1;
-
-    if (Math.random() < 0.5) a = -a;
-    if (Math.random() < 0.5) b = -b;
-
-    const operator = Math.random() < 0.5 ? "+" : "-";
-    const korrekt = operator === "+" ? a + b : a - b;
-
-    let frage = `${a} ${operator} ${b}`;
-    if (b < 0) frage = `${a} ${operator} (${b})`;
-
-    arr.push({ frage, korrekt });
-  }
-	  
-
-return arr;
+  return arr;
 }
 
 function loescheFehlerAufgaben() {
