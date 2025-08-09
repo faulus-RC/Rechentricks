@@ -1,5 +1,3 @@
-console.log("main.js wurde geladen");
-
 let trick = 0, aufgaben = [], aktuelleFrageIndex = 0, richtig = 0, startZeit = 0, versuch = 0, aktuellesLevel = "leicht";
 
 const tipps = {
