@@ -389,14 +389,15 @@ function startTrick(nr) {
   document.getElementById('menue').style.display = 'none';
   document.getElementById('spielbereich').style.display = 'block';
 
-  // 🧼 Alte Anzeige entfernen, neue einfügen
   const alteAnzeige = document.querySelector("#spielbereich .level-anzeige");
   if (alteAnzeige) alteAnzeige.remove();
   document.getElementById("fortschritt")
     .insertAdjacentHTML("beforebegin", `<p class="level-anzeige" style="color:#666">Level: ${level}</p>`);
 
-  naechsteAufgabe();
+  // Wichtig: true übergeben -> Focus im selben User-Event
+  naechsteAufgabe(true);
 }
+
 function checkAntwort() {
   const eingabe = document.getElementById('eingabe').value.trim().replace(",", ".").toLowerCase();
   const korrekt = aufgaben[aktuelleFrageIndex].korrekt.toString().toLowerCase();
@@ -430,8 +431,10 @@ function naechsteAufgabe(fromUserGesture = false) {
   versuch = 0;
   document.getElementById('weiterBtn').style.display = 'none';
   document.getElementById('tipp').textContent = "";
+
   const eingabe = document.getElementById('eingabe');
   eingabe.value = "";
+
   const feedback = document.getElementById('feedback');
   feedback.textContent = "";
   feedback.className = "";
@@ -461,69 +464,19 @@ function naechsteAufgabe(fromUserGesture = false) {
   eingabe.setAttribute("onkeydown", "if(event.key==='Enter') checkAntwort()");
   eingabe.style.display = 'inline';
 
-  // 🔑 Fokus-Handling (iOS-freundlich)
+  // Fokus: im User-Event sofort, sonst im nächsten Frame
   const doFocus = () => {
-    // kleine Hilfe für iOS
     eingabe.focus({ preventScroll: true });
     try { eingabe.setSelectionRange(eingabe.value.length, eingabe.value.length); } catch {}
   };
 
   if (fromUserGesture) {
-    // erster Focus direkt im selben User-Event
     doFocus();
   } else {
-    // weitere Aufgaben: im nächsten Frame
     requestAnimationFrame(doFocus);
   }
 
-
-  // iOS‑Erkennung schlank halten
-  const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isiOS) ensureFocus(); else setTimeout(() => eingabe.focus(), 30);
-
   startZeit = Date.now();
-}
-
-function zeigeStatus() {
-  const titel = trickNamen[trick] || `Trick #${trick}`;
-  document.getElementById('spielbereich').style.display = 'none';
-  document.getElementById('status').style.display = 'block';
-  document.getElementById('emoji').textContent = "🎉";
-  
-  const punkte = richtig * 10;
-  const anzahlSterne = Math.round(richtig / aufgaben.length * 5);
-  const sterne = '⭐️'.repeat(anzahlSterne) + '☆'.repeat(5 - anzahlSterne);
-
-   // 📅 Datum & Uhrzeit formatieren
-  const jetzt = new Date();
-  const datumUhrzeit = jetzt.toLocaleString('de-DE', {
-    dateStyle: 'short',
-    timeStyle: 'short'
-  });
-  
-  let lob = "";
-  if (richtig === aufgaben.length) {
-    lob = "🏆 Perfekt! Du bist ein Rechentrick-Profi!";
-    konfetti();
-  } else if (richtig >= aufgaben.length * 0.8) {
-    lob = "👏 Super Leistung!";
-  } else if (richtig >= aufgaben.length * 0.5) {
-    lob = "💪 Weiter so!";
-  } else {
-    lob = "🧐 Das darfst nochmal machen - aaaber: Übung macht den Meister!😘😁";
-  }
-  document.getElementById('zusammenfassung').innerText =
-    `📅 Datum/Zeit: ${datumUhrzeit}\n🧠 Thema: ${titel}\n🧩 Level: ${aktuellesLevel}\n` +
-    `Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n🎯 Punkte: ${punkte}\n` +
-    `${sterne}\n\n${lob}`;
-	
-  const levelTricks = [1, 4, 7, 8, 13, 14];
-  if (levelTricks.includes(trick)) {
-    const neuesLevel = richtig >= 9 ? "schwer" : richtig >= 6 ? "mittel" : "leicht";
-    document.getElementById("level").value = neuesLevel;
-    aktuellesLevel = neuesLevel;
-    document.getElementById('zusammenfassung').innerText += `\n📊 Dein Level wurde auf \"${neuesLevel}\" angepasst.`;
-  }
 }
 
 function konfetti() {
