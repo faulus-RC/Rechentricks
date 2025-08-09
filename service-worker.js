@@ -35,17 +35,34 @@ self.addEventListener("message", (event) => {
   }
 });
 
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
-  e.respondWith(
-    caches.match(req).then((cached) => {
-      const fetchPromise = fetch(req).then((res) => {
-        if (res && res.status === 200 && res.type === "basic") {
-          caches.open(CACHE).then((c) => c.put(req, res.clone()));
-        }
-        return res;
-      }).catch(() => cached);
-      return cached || fetchPromise;
-    })
-  );
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
+
+  // Nur GET cachen
+  if (req.method !== "GET") return;
+
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE);
+
+    // 1) Sofort aus Cache, wenn vorhanden
+    const cached = await cache.match(req);
+    
+    // 2) Parallel Netzwerk anwerfen und (falls ok) aktualisieren
+    const networkPromise = fetch(req).then((res) => {
+      // Nur sinnvolle Antworten cachen
+      if (!res || res.status !== 200 || res.type !== "basic") {
+        return res; // trotzdem an Client zurückgeben
+      }
+      // Wichtig: vor jeglicher Nutzung klonen
+      const copy = res.clone();
+      cache.put(req, copy).catch(() => { /* ignore */ });
+      return res; // Original an Client
+    }).catch(() => {
+      // offline/Fehler: nichts tun, wir fallen ggf. auf cached zurück
+      return undefined;
+    });
+
+    // 3) Bevorzugt Cache, sonst Netzwerk
+    return cached || networkPromise || new Response("", { status: 504, statusText: "Offline" });
+  })());
 });
