@@ -325,7 +325,7 @@ function generiereAufgaben(nr) {
     arr.push(aufgabe);
   }
 
-} else if (nr === 16) {
+} } else if (nr === 16) {
   const level = document.getElementById("level").value;
   const max = level === "leicht" ? 10 : level === "mittel" ? 20 : 50;
 
@@ -348,7 +348,6 @@ function generiereAufgaben(nr) {
 
 return arr;
 }
-
 
 function loescheFehlerAufgaben() {
   localStorage.removeItem("fehlerAufgaben");
