@@ -1,6 +1,6 @@
 // service-worker.js
-const APP_VERSION = "v7";
-const CACHE       = `rechentricks-${APP_VERSION}`;
+const APP_VERSION = "v8";
+const CACHE = `rechentricks-${APP_VERSION}`;
 const ASSETS = [
   "./",
   "./index.html",
@@ -26,43 +26,28 @@ self.addEventListener("activate", (e) => {
   );
 });
 
+// Optional: für Versionsanzeige / SkipWaiting
 self.addEventListener("message", (event) => {
   const msg = event.data || {};
-  if (msg.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  } else if (msg.type === "GET_VERSION") {
-    event.source?.postMessage({ type: "VERSION", version: APP_VERSION });
-  }
+  if (msg.type === "SKIP_WAITING") self.skipWaiting();
+  if (msg.type === "GET_VERSION") event.source?.postMessage({ type: "VERSION", version: APP_VERSION });
 });
 
+// 📦 Cache-first, Network-Fallback (keine dynamische Cache-Aktualisierung)
 self.addEventListener("fetch", (event) => {
-  const req = event.request;
-
-  // Nur GET cachen
-  if (req.method !== "GET") return;
+  if (event.request.method !== "GET") return;
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
+    const cached = await cache.match(event.request);
+    if (cached) return cached;
 
-    // 1) Sofort aus Cache, wenn vorhanden
-    const cached = await cache.match(req);
-    
-    // 2) Parallel Netzwerk anwerfen und (falls ok) aktualisieren
-    const networkPromise = fetch(req).then((res) => {
-      // Nur sinnvolle Antworten cachen
-      if (!res || res.status !== 200 || res.type !== "basic") {
-        return res; // trotzdem an Client zurückgeben
-      }
-      // Wichtig: vor jeglicher Nutzung klonen
-      const copy = res.clone();
-      cache.put(req, copy).catch(() => { /* ignore */ });
-      return res; // Original an Client
-    }).catch(() => {
-      // offline/Fehler: nichts tun, wir fallen ggf. auf cached zurück
-      return undefined;
-    });
-
-    // 3) Bevorzugt Cache, sonst Netzwerk
-    return cached || networkPromise || new Response("", { status: 504, statusText: "Offline" });
+    try {
+      const res = await fetch(event.request);
+      return res; // (Kein put in Cache nötig, Install hat alles)
+    } catch {
+      // Offline & nicht im Cache
+      return new Response("", { status: 504, statusText: "Offline" });
+    }
   })());
 });
