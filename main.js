@@ -126,9 +126,7 @@ function generiereAufgaben(nr) {
       } else {
         b = Math.floor(Math.random() * (range[1] - range[0] + 1)) + range[0];
       }
-      const frage = `${a} × ${b}`;
-      const korrekt = a * b;
-      arr.push({ frage, korrekt });
+      arr.push({ frage: `${a} × ${b}`, korrekt: a * b });
     }
 
   } else if (nr === 9) {
@@ -137,9 +135,7 @@ function generiereAufgaben(nr) {
       const n2 = Math.floor(Math.random() * 8 + 2);
       const z1 = Math.floor(Math.random() * (n1 - 1) + 1);
       const z2 = Math.floor(Math.random() * (n2 - 1) + 1);
-      const frage = `${z1}/${n1} + ${z2}/${n2}`;
-      const korrekt = `${z1 * n2 + z2 * n1}/${n1 * n2}`;
-      arr.push({ frage, korrekt });
+      arr.push({ frage: `${z1}/${n1} + ${z2}/${n2}`, korrekt: `${z1 * n2 + z2 * n1}/${n1 * n2}` });
     }
 
   } else if (nr === 10) {
