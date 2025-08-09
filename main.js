@@ -443,8 +443,9 @@ function naechsteAufgabe() {
 
   const aufgabe = aufgaben[aktuelleFrageIndex];
   document.getElementById('frage').textContent = aufgabe.frage;
-  document.getElementById('fortschritt').textContent = `Frage ${aktuelleFrageIndex + 1} von ${aufgaben.length}`;
-  
+  document.getElementById('fortschritt').textContent =
+    `Frage ${aktuelleFrageIndex + 1} von ${aufgaben.length}`;
+
   const eingabe = document.getElementById('eingabe');
 
   // Eingabe-Feld vorbereiten je nach Trick
@@ -460,14 +461,29 @@ function naechsteAufgabe() {
   }
 
   eingabe.setAttribute("autocomplete", "off");
-  eingabe.setAttribute("onkeydown", "if(event.key==='Enter') checkAntwort()");
+  // enter-Handler nur setzen, falls nicht schon vorhanden
+  if (!eingabe._enterBound) {
+    eingabe.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkAntwort();
+    });
+    eingabe._enterBound = true;
+  }
   eingabe.style.display = 'inline';
 
-  // Fokus mit leichter Verzögerung setzen
-  setTimeout(() => eingabe.focus(), 50);
-  
+  // ✅ Stabiler Fokus (besonders für iOS Safari)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      eingabe.focus({ preventScroll: true });
+      if (eingabe.setSelectionRange) {
+        const len = eingabe.value.length;
+        eingabe.setSelectionRange(len, len); // Cursor ans Ende
+      }
+    });
+  });
+
   startZeit = Date.now();
 }
+
 function zeigeStatus() {
   const titel = trickNamen[trick] || `Trick #${trick}`;
   document.getElementById('spielbereich').style.display = 'none';
