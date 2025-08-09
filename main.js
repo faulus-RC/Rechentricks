@@ -316,8 +316,14 @@ function startTrick(nr) {
 }
 
 function checkAntwort() {
+  // Guard: keine Aufgabe mehr? raus.
+  if (aktuelleFrageIndex >= aufgaben.length) return;
+
+  const cur = aufgaben[aktuelleFrageIndex];
+  if (!cur) return;
+
   const eingabe = document.getElementById('eingabe').value.trim().replace(",", ".").toLowerCase();
-  const korrekt = aufgaben[aktuelleFrageIndex].korrekt.toString().toLowerCase();
+  const korrekt = String(cur.korrekt).toLowerCase();
   const dauer = ((Date.now() - startZeit) / 1000).toFixed(1);
   const feedback = document.getElementById('feedback');
   feedback.className = "";
@@ -337,7 +343,7 @@ function checkAntwort() {
       feedback.textContent = `❌ Leider falsch – versuch’s nochmal!`;
     } else {
       feedback.textContent = `❌ Leider falsch. Richtig war: ${korrekt}`;
-      speichereFehlerAufgabe({ ...aufgaben[aktuelleFrageIndex], trick });
+      speichereFehlerAufgabe({ ...cur, trick });
       aktuelleFrageIndex++;
       setTimeout(naechsteAufgabe, 1500);
     }
@@ -397,9 +403,11 @@ function zeigeStatus() {
   document.getElementById('spielbereich').style.display = 'none';
   document.getElementById('status').style.display = 'block';
   document.getElementById('emoji').textContent = "🎉";
+
   const punkte = richtig * 10;
-  const anzahlSterne = Math.round(richtig / aufgaben.length * 5);
+  const anzahlSterne = Math.round((richtig / aufgaben.length) * 5);
   const sterne = '⭐️'.repeat(anzahlSterne) + '☆'.repeat(5 - anzahlSterne);
+
   let lob = "";
   if (richtig === aufgaben.length) {
     lob = "🏆 Perfekt! Du bist ein Rechentrick-Profi!";
@@ -411,15 +419,20 @@ function zeigeStatus() {
   } else {
     lob = "🧐 Übung macht den Meister!";
   }
+
   document.getElementById('zusammenfassung').innerText =
-    Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n🎯 Punkte: ${punkte}\n${sterne}\n\n${lob};
+    `Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.
+🎯 Punkte: ${punkte}
+${sterne}
+
+${lob}`;
 
   const levelTricks = [1, 4, 7, 8, 13, 14];
   if (levelTricks.includes(trick)) {
     const neuesLevel = richtig >= 9 ? "schwer" : richtig >= 6 ? "mittel" : "leicht";
     document.getElementById("level").value = neuesLevel;
     aktuellesLevel = neuesLevel;
-    document.getElementById('zusammenfassung').innerText += \n📊 Dein Level wurde auf \"${neuesLevel}\" angepasst.;
+    document.getElementById('zusammenfassung').innerText += `\n📊 Dein Level wurde auf "${neuesLevel}" angepasst.`;
   }
 }
 
