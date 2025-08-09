@@ -1,5 +1,5 @@
 // service-worker.js
-const APP_VERSION = "v7";                    // <— nur HIER zentral ändern
+const APP_VERSION = "v7";
 const CACHE       = `rechentricks-${APP_VERSION}`;
 const ASSETS = [
   "./",
@@ -14,7 +14,7 @@ self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(CACHE)
       .then((cache) => cache.addAll(ASSETS))
-      .then(() => self.skipWaiting()) // sofort aktiv werden
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -22,22 +22,19 @@ self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.map((k) => (k !== CACHE ? caches.delete(k) : null)))
-    ).then(() => self.clients.claim()) // alle Clients übernehmen
+    ).then(() => self.clients.claim())
   );
 });
 
-// Nachrichten vom Client
 self.addEventListener("message", (event) => {
   const msg = event.data || {};
   if (msg.type === "SKIP_WAITING") {
     self.skipWaiting();
   } else if (msg.type === "GET_VERSION") {
-    // Antworte dem Sender (der aktuellen Seite)
     event.source?.postMessage({ type: "VERSION", version: APP_VERSION });
   }
 });
 
-// Stale-while-revalidate
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   e.respondWith(
