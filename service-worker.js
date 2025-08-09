@@ -1,5 +1,5 @@
 // service-worker.js
-const APP_VERSION = "v6";                    // <— nur HIER zentral ändern
+const APP_VERSION = "v7";                    // <— nur HIER zentral ändern
 const CACHE       = `rechentricks-${APP_VERSION}`;
 const ASSETS = [
   "./",
