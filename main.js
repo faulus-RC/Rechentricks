@@ -476,8 +476,6 @@ function naechsteAufgabe(fromUserGesture = false) {
     requestAnimationFrame(doFocus);
   }
 
-  startZeit = Date.now();
-}
 
   // iOS‑Erkennung schlank halten
   const isiOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
