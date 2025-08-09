@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE = "rechentricks-v4"; // <— neue Version
+const CACHE = "rechentricks-v5"; // <— neue Version
 const ASSETS = [
   "./",             // Root
   "./index.html",
