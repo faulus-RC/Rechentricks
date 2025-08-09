@@ -389,15 +389,14 @@ function startTrick(nr) {
   document.getElementById('menue').style.display = 'none';
   document.getElementById('spielbereich').style.display = 'block';
 
+  // 🧼 Alte Anzeige entfernen, neue einfügen
   const alteAnzeige = document.querySelector("#spielbereich .level-anzeige");
   if (alteAnzeige) alteAnzeige.remove();
   document.getElementById("fortschritt")
     .insertAdjacentHTML("beforebegin", `<p class="level-anzeige" style="color:#666">Level: ${level}</p>`);
 
-  // wichtig: Flag true
-  naechsteAufgabe(true);
+  naechsteAufgabe();
 }
-
 function checkAntwort() {
   const eingabe = document.getElementById('eingabe').value.trim().replace(",", ".").toLowerCase();
   const korrekt = aufgaben[aktuelleFrageIndex].korrekt.toString().toLowerCase();
