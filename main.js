@@ -477,6 +477,13 @@ function zeigeStatus() {
   const punkte = richtig * 10;
   const anzahlSterne = Math.round(richtig / aufgaben.length * 5);
   const sterne = '⭐️'.repeat(anzahlSterne) + '☆'.repeat(5 - anzahlSterne);
+
+   // 📅 Datum & Uhrzeit formatieren
+  const jetzt = new Date();
+  const datumUhrzeit = jetzt.toLocaleString('de-DE', {
+    dateStyle: 'short',
+    timeStyle: 'short'
+  });
   
   let lob = "";
   if (richtig === aufgaben.length) {
@@ -489,8 +496,10 @@ function zeigeStatus() {
   } else {
     lob = "🧐 Das darfst nochmal machen - aaaber: Übung macht den Meister!😘😁";
   }
-document.getElementById('zusammenfassung').innerText =
-    `🧠 Thema: ${titel}\n🧩 Level: ${aktuellesLevel}\nDu hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n🎯 Punkte: ${punkte}\n${sterne}\n\n${lob}`;
+  document.getElementById('zusammenfassung').innerText =
+    `📅 Datum/Zeit: ${datumUhrzeit}\n🧠 Thema: ${titel}\n🧩 Level: ${aktuellesLevel}\n` +
+    `Du hast ${richtig} von ${aufgaben.length} Aufgaben richtig gelöst.\n🎯 Punkte: ${punkte}\n` +
+    `${sterne}\n\n${lob}`;
 	
   const levelTricks = [1, 4, 7, 8, 13, 14];
   if (levelTricks.includes(trick)) {
